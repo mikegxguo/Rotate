@@ -14,22 +14,21 @@ public class Rotate extends Activity {
     private TextView mTextView01;
     private Thread mThread;
     private static final int MSG_AUTO_ROTATE = 0x1000;
+    private static String VERSION = "1.1.0.0    2015/6/25 16:34";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
         mTextView01 = (TextView) findViewById(R.id.myTextView1);
-        mTextView01.setText("1.1.0.0    2015/6/25");
+        mTextView01.setText(VERSION);
     }
 
     public void onAutoRotate(View v) {
-        // 如果线程还没启动，则启动新的线程
         if (mThread == null) {
             mThread = new Thread(runnable);
             mThread.start();
 
-            // 否则提示："线程已经启动"
         } else {
             Toast.makeText(getApplication(),
                     getApplication().getString(R.string.thread_started),
@@ -38,7 +37,6 @@ public class Rotate extends Activity {
     }
 
     private Handler mHandler = new Handler() {
-        // 重写handleMessage()方法，此方法在UI线程运行
         @Override
         public void handleMessage(Message msg) {
             switch (msg.what) {
@@ -50,7 +48,6 @@ public class Rotate extends Activity {
     };
 
     Runnable runnable = new Runnable() {
-        // 重写run()方法，此方法在新的线程中运行
         @Override
         public void run() {
             mHandler.obtainMessage(MSG_AUTO_ROTATE, null).sendToTarget();
@@ -59,11 +56,7 @@ public class Rotate extends Activity {
     };
 
     public void onRotate(View v) {
-        /* 方法一：重写getRequestedOrientation */
-
-        /* 若无法取得screenOrientation属性 */
         if (getRequestedOrientation() == -1) {
-            /* 提示无法进行画面旋转功能，因无法判别Orientation */
             mTextView01.setText(getResources().getText(R.string.str_err_1001));
         } else {
             if (getRequestedOrientation() == ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE) {
@@ -82,14 +75,11 @@ public class Rotate extends Activity {
     public void setRequestedOrientation(int requestedOrientation) {
         // TODO Auto-generated method stub
 
-        /* 判断要更改的方向，以Toast提示 */
         switch (requestedOrientation) {
-        /* 更改为LANDSCAPE */
         case (ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE):
             // mMakeTextToast(
             // getResources().getText(R.string.str_msg1).toString(), false);
             break;
-        /* 更改为PORTRAIT */
         case (ActivityInfo.SCREEN_ORIENTATION_PORTRAIT):
             // mMakeTextToast(
             // getResources().getText(R.string.str_msg2).toString(), false);
@@ -102,7 +92,6 @@ public class Rotate extends Activity {
     public int getRequestedOrientation() {
         // TODO Auto-generated method stub
 
-        /* 此重写getRequestedOrientation方法，可取得目前屏幕的方向 */
         return super.getRequestedOrientation();
     }
 
