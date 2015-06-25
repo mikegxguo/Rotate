@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="hello">Hello World, Rotate!</string>
+    <string name="app_name">Rotate</string>
+    <string name="rotate">Rotate</string>
+    <string name="autorotate">Auto Rotate</string>
+    <string name="str_err_1001">can not get the orientation</string>
+    <string name="str_msg1">rotate 1</string>
+    <string name="str_msg2">rotate 2</string>
+    <string name="thread_started">Auto rotating thread fail</string>
+
+</resources>
