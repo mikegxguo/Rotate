@@ -1,10 +1,19 @@
 package com.mitac.rotate;
 
 import android.app.Activity;
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.ActivityInfo;
+import android.os.BatteryManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.os.SystemClock;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -15,15 +24,58 @@ public class Rotate extends Activity {
     private Thread mThread;
     private static final int MSG_AUTO_ROTATE = 0x1000;
     private static String VERSION = "1.1.0.0    2015/6/25 16:34";
+    
+    private static String TAG = "Test";
+    
+    private IntentFilter mIntentFilter;
+    //private PendingIntent pi;
+    //private AlarmManager am;
+    private Context mContext;
 
+    private BroadcastReceiver mIntentReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Log.d(TAG, "mIntentReceiver");
+            
+            PendingIntent pi = PendingIntent.getBroadcast(mContext, 0, new Intent("MIKE"),PendingIntent.FLAG_CANCEL_CURRENT);        
+            AlarmManager am = (AlarmManager)getSystemService(ALARM_SERVICE);  
+            am.cancel(pi);
+            am.set(AlarmManager.ELAPSED_REALTIME_WAKEUP,  SystemClock.elapsedRealtime()+60*60*1000,  pi);   
+        }
+    };
+
+    
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
         mTextView01 = (TextView) findViewById(R.id.myTextView1);
         mTextView01.setText(VERSION);
+        
+        mContext = this;
+        
+/*        
+        Intent intent = new Intent("MIKE_MIKE_MIKE_MIKE");
+        intent.putExtra("msg","Hello");  
+        pi = PendingIntent.getBroadcast(this,0,intent,0);        
+        am = (AlarmManager)getSystemService(ALARM_SERVICE);  
+*/
+        mIntentFilter = new IntentFilter();
+        mIntentFilter.addAction(Intent.ACTION_BATTERY_CHANGED);
+        mIntentFilter.addAction(Intent.ACTION_SCREEN_ON);
+        registerReceiver(mIntentReceiver, mIntentFilter);
+        
+        
     }
 
+    @Override
+    protected void onDestroy() {
+        Log.d(TAG, "onDestroy");
+        unregisterReceiver(mIntentReceiver);
+        super.onDestroy();
+    }
+    
+    
     public void onAutoRotate(View v) {
         if (mThread == null) {
             mThread = new Thread(runnable);
@@ -70,6 +122,19 @@ public class Rotate extends Activity {
             }
         }
     }
+    
+    public class MyReceiver extends BroadcastReceiver
+    {
+        @Override
+        public void onReceive(Context context, Intent intent)
+        {
+            // TODO Auto-generated method stub
+            Log.d(TAG, "onclock......................");
+            String msg = intent.getStringExtra("msg");
+            Toast.makeText(context,msg,Toast.LENGTH_SHORT).show();
+        }
+
+    }    
 
     @Override
     public void setRequestedOrientation(int requestedOrientation) {
