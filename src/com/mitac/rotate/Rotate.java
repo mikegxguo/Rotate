@@ -23,9 +23,9 @@ public class Rotate extends Activity {
     private TextView mTextView01;
     private Thread mThread;
     private static final int MSG_AUTO_ROTATE = 0x1000;
-    private static String VERSION = "1.1.0.0    2015/6/25 16:34";
+    private static String VERSION = "1.2.0.0    2018/7/10 13:25";
     
-    private static String TAG = "Test";
+    private static String TAG = "Rotate";
     
     private IntentFilter mIntentFilter;
     //private PendingIntent pi;
@@ -64,8 +64,8 @@ public class Rotate extends Activity {
         mIntentFilter.addAction(Intent.ACTION_BATTERY_CHANGED);
         mIntentFilter.addAction(Intent.ACTION_SCREEN_ON);
         registerReceiver(mIntentReceiver, mIntentFilter);
-        
-        
+
+        //setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
     }
 
     @Override
@@ -103,7 +103,7 @@ public class Rotate extends Activity {
         @Override
         public void run() {
             mHandler.obtainMessage(MSG_AUTO_ROTATE, null).sendToTarget();
-            mHandler.postDelayed(this, 1000);
+            mHandler.postDelayed(this, 2000);
         }
     };
 
@@ -112,12 +112,16 @@ public class Rotate extends Activity {
             mTextView01.setText(getResources().getText(R.string.str_err_1001));
         } else {
             if (getRequestedOrientation() == ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE) {
-                setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT);
-            } else if (getRequestedOrientation() == ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT) {
+                Log.d(TAG, "SCREEN_ORIENTATION_PORTRAIT");
                 setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
             } else if (getRequestedOrientation() == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT) {
+                Log.d(TAG, "SCREEN_ORIENTATION_REVERSE_LANDSCAPE");
                 setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE);
             } else if (getRequestedOrientation() == ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE) {
+                Log.d(TAG, "SCREEN_ORIENTATION_REVERSE_PORTRAIT");
+                setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT);
+            } else if (getRequestedOrientation() == ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT) {
+                Log.d(TAG, "SCREEN_ORIENTATION_LANDSCAPE");
                 setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
             }
         }
