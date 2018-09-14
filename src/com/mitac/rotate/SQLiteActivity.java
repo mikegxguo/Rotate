@@ -71,7 +71,7 @@ public class SQLiteActivity extends Activity {
     class InsertListener implements OnClickListener{
         @Override
             public void onClick(View v) {
-                Toast.makeText(SQLiteActivity.this, "Insert....", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(SQLiteActivity.this, "Insert....", Toast.LENGTH_SHORT).show();
                 StuDBHelper dbHelper = new StuDBHelper(SQLiteActivity.this,DB_NAME,null,1);
                 SQLiteDatabase db =dbHelper.getWritableDatabase();
 
