@@ -18,6 +18,31 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import android.media.MediaCodec;
+import android.media.MediaCodecInfo;
+import android.media.MediaCodecInfo.AudioCapabilities;
+import android.media.MediaCodecInfo.CodecCapabilities;
+import android.media.MediaCodecInfo.CodecProfileLevel;
+import android.media.MediaCodecInfo.VideoCapabilities;
+import static android.media.MediaCodecInfo.CodecProfileLevel.*;
+import android.media.MediaCodecList;
+import android.media.MediaFormat;
+import static android.media.MediaFormat.MIMETYPE_VIDEO_AVC;
+import static android.media.MediaFormat.MIMETYPE_VIDEO_H263;
+import static android.media.MediaFormat.MIMETYPE_VIDEO_HEVC;
+import static android.media.MediaFormat.MIMETYPE_VIDEO_MPEG4;
+import static android.media.MediaFormat.MIMETYPE_VIDEO_VP8;
+import static android.media.MediaFormat.MIMETYPE_VIDEO_VP9;
+import android.media.MediaPlayer;
+
+//import com.android.compatibility.common.util.ApiLevelUtil;
+//import com.android.compatibility.common.util.DynamicConfigDeviceSide;
+//import com.android.compatibility.common.util.MediaUtils;
+
+
+
+
+
 public class Rotate extends Activity {
     /** Called when the activity is first created. */
     private TextView mTextView01;
@@ -25,7 +50,7 @@ public class Rotate extends Activity {
     private static final int MSG_AUTO_ROTATE = 0x1000;
     private static String VERSION = "1.2.0.0    2018/7/10 13:25";
     
-    private static String TAG = "Rotate";
+    private static String TAG = "MIKE";
     
     private IntentFilter mIntentFilter;
     //private PendingIntent pi;
@@ -44,7 +69,61 @@ public class Rotate extends Activity {
         }
     };
 
-    
+    public void printMediaCodecInfo() {
+        int CodecCount = 0;
+        Log.d(TAG, "printMediaCodecInfo 0000");
+        try {
+            CodecCount = MediaCodecList.getCodecCount();
+        }catch (Exception e) {
+            Log.e(TAG, "##### Failed to get codec count!");
+            e.printStackTrace();
+            return;
+        }
+
+        Log.d(TAG, "printMediaCodecInfo codec count:"+CodecCount);
+        for (int i = 0; i < CodecCount; ++i) {
+            MediaCodecInfo info = null;
+            try {
+                info = MediaCodecList.getCodecInfoAt(i);
+            } catch (IllegalArgumentException e) {
+                Log.e(TAG, "Cannot retrieve decoder codec info", e);
+            }
+            if (info == null) {
+                continue;
+            }
+
+            Log.d(TAG, "printMediaCodecInfo info:"+info.getName());
+            String codecInfo = "MediaCodec, name="+info.getName()+", [";
+            for (String mimeType : info.getSupportedTypes()) {
+                codecInfo += mimeType + ",";
+                MediaCodecInfo.CodecCapabilities capabilities;
+                try {
+                    capabilities = info.getCapabilitiesForType(mimeType);
+                } catch (IllegalArgumentException e) {
+                    Log.e(TAG, "Cannot retrieve decoder capabilities", e);
+                    continue;
+                }
+                codecInfo += " max inst:"+capabilities.getMaxSupportedInstances()+",";
+                String strColorFormatList = "";
+                for (int colorFormat : capabilities.colorFormats) {
+                    strColorFormatList += " 0x" + Integer.toHexString(colorFormat);
+                }
+                codecInfo += strColorFormatList + "] [";
+            }
+            Log.w(TAG, codecInfo);
+        }
+
+//        boolean bSupportHwVP8 = MediaCodecVideoEncoder.isVp8HwSupported();
+//        boolean bSupportHwVP9 = MediaCodecVideoEncoder.isVp9HwSupported();
+//        boolean bSupportHwH264 = MediaCodecVideoEncoder.isH264HwSupported();
+//        String webrtcCodecInfo = "WebRTC codec support: HwVP8=" + bSupportHwVP8 + ", HwVP9=" + bSupportHwVP9
+//            + ", Hw264=" + bSupportHwH264;
+//        if(bSupportHwH264) {
+//            webrtcCodecInfo += ", Hw264HighProfile=" + MediaCodecVideoEncoder.isH264HighProfileHwSupported();
+//        }
+//        Log.w(TAG, webrtcCodecInfo);
+    }    
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -53,6 +132,8 @@ public class Rotate extends Activity {
         mTextView01.setText(VERSION);
         
         mContext = this;
+        Log.d(TAG, "MIKE MIKE");
+        printMediaCodecInfo();//FOR TEST
         
 /*        
         Intent intent = new Intent("MIKE_MIKE_MIKE_MIKE");
@@ -60,10 +141,10 @@ public class Rotate extends Activity {
         pi = PendingIntent.getBroadcast(this,0,intent,0);        
         am = (AlarmManager)getSystemService(ALARM_SERVICE);  
 */
-        mIntentFilter = new IntentFilter();
-        mIntentFilter.addAction(Intent.ACTION_BATTERY_CHANGED);
-        mIntentFilter.addAction(Intent.ACTION_SCREEN_ON);
-        registerReceiver(mIntentReceiver, mIntentFilter);
+//        mIntentFilter = new IntentFilter();
+//        mIntentFilter.addAction(Intent.ACTION_BATTERY_CHANGED);
+//        mIntentFilter.addAction(Intent.ACTION_SCREEN_ON);
+//        registerReceiver(mIntentReceiver, mIntentFilter);
 
         //setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
     }

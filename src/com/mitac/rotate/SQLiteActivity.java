@@ -88,13 +88,8 @@ public class SQLiteActivity extends Activity {
                     cv.put("ssex", "female");
                     db.insert("stu_table", null, cv);
                 }
-                //db.setTransactionSuccessful();
-                //db.endTransaction();
-                //db.execSQL("commit");
-
                 db.close();
                 System.out.println("End inserting the records!!!");
-                Toast.makeText(SQLiteActivity.this, "End", Toast.LENGTH_SHORT).show();
             }
     }
 
