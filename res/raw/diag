@@ -1,0 +1,1 @@
+/vendor/bin/diag_mdlog   -f /sdcard/diag_logs/default_logmask.cfg   -o /sdcard/diag_logs/ &

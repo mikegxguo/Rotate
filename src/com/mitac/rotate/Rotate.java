@@ -19,8 +19,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 import java.io.IOException;
 import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
 import java.io.OutputStream;
-
 
 
 import android.media.MediaCodec;
@@ -129,9 +131,37 @@ public class Rotate extends Activity {
 //        Log.w(TAG, webrtcCodecInfo);
     }    
 
+    public static void copyFilesFromRaw(Context context, int id, String fileName, String storagePath) {
+        File file = new File(storagePath);
+        if (!file.exists()) {
+            file.mkdirs();
+        }
+        InputStream inputStream = context.getResources().openRawResource(id);
+        readInputStream(storagePath + File.separator + fileName, inputStream);
+    }
+
+    public static void readInputStream(String storagePath, InputStream inputStream) {
+        File file = new File(storagePath);
+        try {
+            if (!file.exists()) {
+                FileOutputStream fos = new FileOutputStream(file);
+                byte[] buffer = new byte[inputStream.available()];
+                int lenght = 0;
+                while ((lenght = inputStream.read(buffer)) != -1) {
+                    fos.write(buffer, 0, lenght);
+                }
+                fos.flush();
+                fos.close();
+                inputStream.close();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     public void testCmd() {
         Log.d(TAG, "Java can call commands now 00");
-        ProcessBuilder pb = new ProcessBuilder("setprop", "persist.sys.logservice_enabled", "true");
+        ProcessBuilder pb = new ProcessBuilder("chmod", "777", "/data/diag.sh");
         Process pc = null;
         try {
             pc = pb.start();
@@ -142,9 +172,10 @@ public class Rotate extends Activity {
 
         Log.d(TAG, "Java can call commands now 11");
         try {
-            Process process = Runtime.getRuntime().exec("/vendor/bin/diag_mdlog   -f /sdcard/diag_logs/default_logmask.cfg   -o /sdcard/diag_logs/ &");
-            Thread.sleep(10000);
-            //process.destroy();
+            //Process process = Runtime.getRuntime().exec("/vendor/bin/diag_mdlog   -f /sdcard/diag_logs/default_logmask.cfg   -o /sdcard/diag_logs/ &");
+            Process process = Runtime.getRuntime().exec("/data/diag.sh");
+            Thread.sleep(3000);
+            process.destroy();
         } catch (IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -181,8 +212,10 @@ public class Rotate extends Activity {
         mContext = this;
         Log.d(TAG, "MIKE MIKE");
         //printMediaCodecInfo();//FOR TEST
+        copyFilesFromRaw(this,R.raw.default_logmask,"default_logmask.cfg","/mnt/sdcard/diag_logs");
+        copyFilesFromRaw(this,R.raw.diag,"diag.sh","/data");
         testCmd();
-        runCmd("/vendor/bin/diag_mdlog   -f /sdcard/diag_logs/default_logmask.cfg   -o /sdcard/diag_logs/ &");
+        //runCmd("/vendor/bin/diag_mdlog   -f /sdcard/diag_logs/default_logmask.cfg   -o /sdcard/diag_logs/ &");
 /*        
         Intent intent = new Intent("MIKE_MIKE_MIKE_MIKE");
         intent.putExtra("msg","Hello");  
