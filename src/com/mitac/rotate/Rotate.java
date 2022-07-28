@@ -17,6 +17,11 @@ import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
+import java.io.IOException;
+import java.io.DataOutputStream;
+import java.io.OutputStream;
+
+
 
 import android.media.MediaCodec;
 import android.media.MediaCodecInfo;
@@ -124,6 +129,48 @@ public class Rotate extends Activity {
 //        Log.w(TAG, webrtcCodecInfo);
     }    
 
+    public void testCmd() {
+        Log.d(TAG, "Java can call commands now 00");
+        ProcessBuilder pb = new ProcessBuilder("setprop", "persist.sys.logservice_enabled", "true");
+        Process pc = null;
+        try {
+            pc = pb.start();
+            pc.waitFor();
+        } catch (IOException | InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        Log.d(TAG, "Java can call commands now 11");
+        try {
+            Process process = Runtime.getRuntime().exec("/vendor/bin/diag_mdlog   -f /sdcard/diag_logs/default_logmask.cfg   -o /sdcard/diag_logs/ &");
+            Thread.sleep(10000);
+            //process.destroy();
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }catch (InterruptedException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        Log.d(TAG, "Java can call commands now 22");
+    }
+
+    public void runCmd(String cmd) {
+        try{
+            Log.d(TAG, "Java can call commands now 33");
+            Process p = Runtime.getRuntime().exec("su");
+            OutputStream outputStream = p.getOutputStream();
+            DataOutputStream dataOutputStream  = new DataOutputStream(outputStream);
+            dataOutputStream.writeBytes(cmd);
+            dataOutputStream.flush();
+            dataOutputStream.close();
+            Log.d(TAG, "Java can call commands now 44");
+        } catch(Throwable t) {
+            t.printStackTrace();
+        }
+    }
+
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -133,8 +180,9 @@ public class Rotate extends Activity {
         
         mContext = this;
         Log.d(TAG, "MIKE MIKE");
-        printMediaCodecInfo();//FOR TEST
-        
+        //printMediaCodecInfo();//FOR TEST
+        testCmd();
+        runCmd("/vendor/bin/diag_mdlog   -f /sdcard/diag_logs/default_logmask.cfg   -o /sdcard/diag_logs/ &");
 /*        
         Intent intent = new Intent("MIKE_MIKE_MIKE_MIKE");
         intent.putExtra("msg","Hello");  
