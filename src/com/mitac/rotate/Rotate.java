@@ -160,6 +160,7 @@ public class Rotate extends Activity {
     }
 
     public void testCmd() {
+        /*
         Log.d(TAG, "Java can call commands now 00");
         ProcessBuilder pb = new ProcessBuilder("chmod", "777", "/data/diag.sh");
         Process pc = null;
@@ -169,13 +170,15 @@ public class Rotate extends Activity {
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
         }
+        */
 
         Log.d(TAG, "Java can call commands now 11");
+
         try {
-            //Process process = Runtime.getRuntime().exec("/vendor/bin/diag_mdlog   -f /sdcard/diag_logs/default_logmask.cfg   -o /sdcard/diag_logs/ &");
-            Process process = Runtime.getRuntime().exec("/data/diag.sh");
+            Process process = Runtime.getRuntime().exec("/vendor/bin/diag_mdlog   -f /sdcard/diag_logs/default_logmask.cfg   -o /sdcard/diag_logs/ &");
+            //Process process = Runtime.getRuntime().exec("/data/diag.sh");
             Thread.sleep(3000);
-            process.destroy();
+            //process.destroy();
         } catch (IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -186,6 +189,7 @@ public class Rotate extends Activity {
         Log.d(TAG, "Java can call commands now 22");
     }
 
+/*
     public void runCmd(String cmd) {
         try{
             Log.d(TAG, "Java can call commands now 33");
@@ -200,7 +204,7 @@ public class Rotate extends Activity {
             t.printStackTrace();
         }
     }
-
+*/
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -213,7 +217,7 @@ public class Rotate extends Activity {
         Log.d(TAG, "MIKE MIKE");
         //printMediaCodecInfo();//FOR TEST
         copyFilesFromRaw(this,R.raw.default_logmask,"default_logmask.cfg","/mnt/sdcard/diag_logs");
-        copyFilesFromRaw(this,R.raw.diag,"diag.sh","/data");
+        //copyFilesFromRaw(this,R.raw.diag,"diag.sh","/data");
         testCmd();
         //runCmd("/vendor/bin/diag_mdlog   -f /sdcard/diag_logs/default_logmask.cfg   -o /sdcard/diag_logs/ &");
 /*        
