@@ -46,7 +46,7 @@ import android.media.MediaPlayer;
 //import com.android.compatibility.common.util.DynamicConfigDeviceSide;
 //import com.android.compatibility.common.util.MediaUtils;
 
-
+import java.lang.reflect.Method;
 
 
 
@@ -58,11 +58,23 @@ public class Rotate extends Activity {
     private static String VERSION = "1.2.0.0    2018/7/10 13:25";
     
     private static String TAG = "MIKE";
-    
+
     private IntentFilter mIntentFilter;
     //private PendingIntent pi;
     //private AlarmManager am;
     private Context mContext;
+
+    public boolean execCmd(final Context context, String cmd) {
+        boolean result = false;
+        try {
+            Class clazzAPi = Class.forName("android.os.MitacApiManager");
+            Method method = clazzAPi.getMethod("executeSpecialCommand",String.class, String.class);
+            result = (boolean)method.invoke(context.getSystemService(clazzAPi), cmd, "Mitac62842");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
 
     private BroadcastReceiver mIntentReceiver = new BroadcastReceiver() {
         @Override
@@ -218,7 +230,8 @@ public class Rotate extends Activity {
         //printMediaCodecInfo();//FOR TEST
         copyFilesFromRaw(this,R.raw.default_logmask,"default_logmask.cfg","/mnt/sdcard/diag_logs");
         //copyFilesFromRaw(this,R.raw.diag,"diag.sh","/data");
-        testCmd();
+        //testCmd();
+        execCmd(this, "/vendor/bin/diag_mdlog   -f /sdcard/diag_logs/default_logmask.cfg   -o /sdcard/diag_logs/ &");
         //runCmd("/vendor/bin/diag_mdlog   -f /sdcard/diag_logs/default_logmask.cfg   -o /sdcard/diag_logs/ &");
 /*        
         Intent intent = new Intent("MIKE_MIKE_MIKE_MIKE");
